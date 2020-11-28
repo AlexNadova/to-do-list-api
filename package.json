@@ -14,7 +14,9 @@
     "nodejs",
     "express",
     "mysql",
-    "restapi"
+    "restapi",
+    "jwt",
+    "authentication"
   ],
   "author": "Alexandra Nadova",
   "license": "ISC",
@@ -23,8 +25,11 @@
   },
   "homepage": "https://github.com/AlexNadova/to-do-list-api#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1"
   }
 }
