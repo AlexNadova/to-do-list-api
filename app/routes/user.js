@@ -1,18 +1,21 @@
+const verifyToken = require("../middleware/authentication");
+const userController = require("../controllers/UserController.js");
+
 module.exports = (app) => {
-  const users = require("../controllers/UserController.js");
-
-  // Create a new User
-  app.post("/users", users.create);
-
-  // Retrieve all Users
-  app.get("/users", users.findAll);
+  app.use(function (req, res, next) {
+    res.header(
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
+  });
 
   // Retrieve a single User with userId
-  app.get("/users/:userId", users.findOne);
+  app.get("/users/:userId", [verifyToken], userController.findOne);
 
   // Update a User with userId
-  app.put("/users/:userId", users.update);
+  app.put("/users/:userId", [verifyToken], userController.update);
 
   // Delete a User with userId
-  app.delete("/users/:userId", users.delete);
+  app.delete("/users/:userId", [verifyToken], userController.delete);
 };

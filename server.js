@@ -1,7 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const app = express();
+
+var corsOptions = {
+  origin: "http://localhost:80",
+};
+
+app.use(cors(corsOptions));
 
 // parse requests of content-type: application/json
 app.use(bodyParser.json());
@@ -15,8 +22,10 @@ app.get("/", (req, res) => {
 });
 
 require("./app/routes/user.js")(app);
+require("./app/routes/auth.js")(app);
 
 // set port, listen for requests
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
   console.log("Server is running on port 3000.");
 });
