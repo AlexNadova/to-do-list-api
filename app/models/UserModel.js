@@ -72,26 +72,22 @@ User.getAll = (result) => {
 };
 
 User.updateById = (id, user, result) => {
-  sql.query(
-    "UPDATE users SET email = ?, name = ?, password = ? WHERE id = ?",
-    [user.email, user.name, user.active, id],
-    (err, res) => {
-      if (err) {
-        console.log("error: ", err);
-        result(null, err);
-        return;
-      }
-
-      if (res.affectedRows == 0) {
-        // not found User with the id
-        result({ kind: "not_found" }, null);
-        return;
-      }
-
-      console.log("updated user: ", { id: id, ...user });
-      result(null, { id: id, ...user });
+  sql.query("UPDATE users SET ? WHERE id = ?", [user, id], (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
     }
-  );
+
+    if (res.affectedRows == 0) {
+      // not found User with the id
+      result({ kind: "not_found" }, null);
+      return;
+    }
+
+    console.log("updated user: ", { id: id, ...user });
+    result(null, { id: id, ...user });
+  });
 };
 
 User.remove = (id, result) => {

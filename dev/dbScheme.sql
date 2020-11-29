@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `notes` (
   userId int(11) NOT NULL,
   content text NOT NULL,
   FOREIGN KEY (userId) REFERENCES users(id)
+  ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* passwords are password */

@@ -1,4 +1,5 @@
 const User = require("../models/UserModel.js");
+var bcrypt = require("bcryptjs");
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -34,7 +35,12 @@ exports.update = (req, res) => {
     });
   }
 
-  User.updateById(req.params.userId, new User(req.body), (err, data) => {
+  //hash password if given
+  if (req.body.password) {
+    req.body.password = bcrypt.hashSync(req.body.password, 8);
+  }
+
+  User.updateById(req.params.userId, req.body, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
