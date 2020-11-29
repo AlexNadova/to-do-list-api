@@ -1,4 +1,4 @@
-const checkEmail = require("../middleware/authentication");
+const { checkEmail } = require("../middleware");
 const authController = require("../controllers/AuthController");
 
 module.exports = function (app) {

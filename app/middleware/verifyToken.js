@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
-const User = require("../models/UserModel");
 
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
@@ -22,17 +21,4 @@ verifyToken = (req, res, next) => {
   });
 };
 
-checkEmail = (req, res, next) => {
-  User.findByEmail(req.body.email, (err, data) => {
-    if (data) {
-      res.status(400).send({
-        message: "Email already in use.",
-      });
-      return;
-    }
-    next();
-  });
-};
-
-module.exports = checkEmail;
 module.exports = verifyToken;

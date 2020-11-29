@@ -1,4 +1,4 @@
-const verifyToken = require("../middleware/authentication");
+const { verifyToken } = require("../middleware");
 const userController = require("../controllers/UserController.js");
 
 module.exports = (app) => {
@@ -11,11 +11,11 @@ module.exports = (app) => {
   });
 
   // Retrieve a single User with userId
-  app.get("/users/:userId", [verifyToken], userController.findOne);
+  app.get("/api/users/:userId", [verifyToken], userController.findOne);
 
   // Update a User with userId
-  app.put("/users/:userId", [verifyToken], userController.update);
+  app.put("/api/users/:userId", [verifyToken], userController.update);
 
   // Delete a User with userId
-  app.delete("/users/:userId", [verifyToken], userController.delete);
+  app.delete("/api/users/:userId", [verifyToken], userController.delete);
 };
