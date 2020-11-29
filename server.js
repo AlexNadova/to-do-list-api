@@ -17,11 +17,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // simple route
-app.get("/", (req, res) => {
+app.get("/api/", (req, res) => {
   res.json({ message: "Hello world!" });
 });
 
 require("./app/routes/user.js")(app);
+require("./app/routes/note.js")(app);
 require("./app/routes/auth.js")(app);
 
 // set port, listen for requests
