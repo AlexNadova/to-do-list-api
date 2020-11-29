@@ -62,7 +62,7 @@ exports.update = (req, res) => {
     });
   }
 
-  Note.updateById(req.params.noteId, new Note(req.body), (err, data) => {
+  Note.updateById(req.params.noteId, req.body.content, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({

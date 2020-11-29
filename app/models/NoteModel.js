@@ -2,8 +2,7 @@ const sql = require("./db.js");
 
 // constructor
 const Note = function (note) {
-  this.userId = note.userId,
-  this.content = note.content;
+  (this.userId = note.userId), (this.content = note.content);
 };
 
 Note.create = (newNote, result) => {
@@ -53,10 +52,10 @@ Note.getAll = (userId, result) => {
   });
 };
 
-Note.updateById = (id, note, result) => {
+Note.updateById = (id, content, result) => {
   sql.query(
-    "UPDATE notes SET email = ?, name = ?, password = ? WHERE id = ?",
-    [note.email, note.name, note.active, id],
+    "UPDATE notes SET content = ? WHERE id = ?",
+    [content, id],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -70,8 +69,8 @@ Note.updateById = (id, note, result) => {
         return;
       }
 
-      console.log("updated note: ", { id: id, ...note });
-      result(null, { id: id, ...note });
+      console.log("updated note: ", { id: id, content: content });
+      result(null, { id: id, content: content });
     }
   );
 };
