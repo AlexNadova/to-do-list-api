@@ -1,4 +1,5 @@
 const sql = require("./db.js");
+const async = require("async");
 
 // constructor
 const Note = function (note) {
@@ -10,12 +11,9 @@ const Note = function (note) {
 Note.create = (newNote, result) => {
   sql.query("INSERT INTO notes SET ?", newNote, (err, res) => {
     if (err) {
-      console.log("error: ", err);
       result(err, null);
       return;
     }
-
-    console.log("created note: ", { id: res.insertId, ...newNote });
     result(null, { id: res.insertId, ...newNote });
   });
 };
@@ -26,13 +24,11 @@ Note.findById = (userId, noteId, result) => {
     [userId, noteId],
     (err, res) => {
       if (err) {
-        console.log("error: ", err);
         result(err, null);
         return;
       }
 
       if (res.length) {
-        console.log("found note: ", res[0]);
         result(null, res[0]);
         return;
       }
@@ -44,14 +40,36 @@ Note.findById = (userId, noteId, result) => {
 };
 
 Note.getAll = (userId, result) => {
-  sql.query("SELECT * FROM notes where userID = ?", userId, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(null, err);
-      return;
+  sql.query(
+    "SELECT notes.id, notes.title, notes.content, notes.createdAt, notes.updatedAt FROM notes where userID = ?",
+    userId,
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+      async.each(
+        res,
+        (row, callback) => {
+          sql.query(
+            "SELECT notes_n_tags.tagId, tags.name FROM notes_n_tags INNER JOIN tags ON notes_n_tags.tagId = tags.id WHERE noteId = ?",
+            row.id,
+            (err, tags) => {
+              row.tags = tags;
+              callback(null);
+            }
+          );
+        },
+        function (err) {
+          if (err) {
+            result(null, err);
+            return;
+          }
+          result(null, { userId, data: res });
+        }
+      );
     }
-    result(null, res);
-  });
+  );
 };
 
 Note.updateById = (id, note, result) => {
@@ -60,7 +78,6 @@ Note.updateById = (id, note, result) => {
     [note.title, note.content, id],
     (err, res) => {
       if (err) {
-        console.log("error: ", err);
         result(null, err);
         return;
       }
@@ -71,7 +88,6 @@ Note.updateById = (id, note, result) => {
         return;
       }
 
-      console.log("updated note: ", { id: id, ...note });
       result(null, { id: id, ...note });
     }
   );
@@ -80,7 +96,6 @@ Note.updateById = (id, note, result) => {
 Note.remove = (id, result) => {
   sql.query("DELETE FROM notes WHERE id = ?", id, (err, res) => {
     if (err) {
-      console.log("error: ", err);
       result(null, err);
       return;
     }
@@ -91,7 +106,6 @@ Note.remove = (id, result) => {
       return;
     }
 
-    console.log("deleted note with id: ", id);
     result(null, res);
   });
 };

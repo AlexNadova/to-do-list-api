@@ -23,6 +23,7 @@ app.get("/api/", (req, res) => {
 
 require("./app/routes/user.js")(app);
 require("./app/routes/note.js")(app);
+require("./app/routes/tag.js")(app);
 require("./app/routes/auth.js")(app);
 
 // set port, listen for requests
