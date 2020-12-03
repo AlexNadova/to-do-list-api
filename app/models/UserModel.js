@@ -72,7 +72,7 @@ User.getAll = (result) => {
 };
 
 User.updateById = (id, user, result) => {
-  sql.query("UPDATE users SET ? WHERE id = ?", [user, id], (err, res) => {
+  sql.query("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?", [user.name, user.email, user.password, id], (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
