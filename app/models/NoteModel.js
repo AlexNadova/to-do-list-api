@@ -6,16 +6,43 @@ const Note = function (note) {
   this.userId = note.userId;
   this.title = note.title;
   this.content = note.content;
+  this.tags = note.tags;
 };
 
-Note.create = (newNote, result) => {
-  sql.query("INSERT INTO notes SET ?", newNote, (err, res) => {
-    if (err) {
-      result(err, null);
-      return;
+Note.create = (userId, newNote, result) => {
+  sql.query(
+    "INSERT INTO notes SET userId = ?, title = ?, content = ?",
+    [userId, newNote.title, newNote.content],
+    (err, res) => {
+      if (err) {
+        result(err, null);
+        return;
+      }
+      async.each(
+        newNote.tags,
+        (tag, callback) => {
+          sql.query(
+            "INSERT INTO notes_n_tags SET noteId = ?, tagId = ?",
+            [res.insertId, tag],
+            (err, res) => {
+              if (err) {
+                result(err, null);
+                callback(err);
+              }
+              callback();
+            }
+          );
+        },
+        function (err) {
+          if (err) {
+            result(err, null);
+            return;
+          }
+          result(null, { id: res.insertId, ...newNote });
+        }
+      );
     }
-    result(null, { id: res.insertId, ...newNote });
-  });
+  );
 };
 
 Note.findById = (userId, noteId, result) => {
@@ -29,7 +56,18 @@ Note.findById = (userId, noteId, result) => {
       }
 
       if (res.length) {
-        result(null, res[0]);
+        sql.query(
+          "SELECT notes_n_tags.tagId, tags.name FROM notes_n_tags INNER JOIN tags ON notes_n_tags.tagId = tags.id WHERE noteId = ?",
+          noteId,
+          (err, tags) => {
+            if (err) {
+              result(err, null);
+              return;
+            }
+            res[0].tags = tags;
+            result(null, res[0]);
+          }
+        );
         return;
       }
 
@@ -72,14 +110,51 @@ Note.getAll = (userId, result) => {
   );
 };
 
-Note.updateById = (id, note, result) => {
+Note.updateById = (userId, id, note, result) => {
   sql.query(
-    "UPDATE notes SET title = ?, content = ? WHERE id = ?",
-    [note.title, note.content, id],
+    "UPDATE notes SET title = ?, content = ? WHERE userId = ? AND id = ?",
+    [note.title, note.content, userId, id],
     (err, res) => {
       if (err) {
         result(null, err);
         return;
+      }
+
+      if (note.tags) {
+        sql.query(
+          "DELETE FROM notes_n_tags WHERE noteId = ?",
+          id,
+          (err, tags) => {
+            if (err) {
+              result(err, null);
+              return;
+            }
+            if (note.tags.length) {
+              async.each(
+                note.tags,
+                (tag, callback) => {
+                  sql.query(
+                    "INSERT INTO notes_n_tags SET noteId = ?, tagId = ?",
+                    [id, tag],
+                    (err, res) => {
+                      if (err) {
+                        result(err, null);
+                        callback(err);
+                      }
+                      callback();
+                    }
+                  );
+                },
+                function (err) {
+                  if (err) {
+                    result(err, null);
+                    return;
+                  }
+                }
+              );
+            }
+          }
+        );
       }
 
       if (res.affectedRows == 0) {
@@ -93,21 +168,25 @@ Note.updateById = (id, note, result) => {
   );
 };
 
-Note.remove = (id, result) => {
-  sql.query("DELETE FROM notes WHERE id = ?", id, (err, res) => {
-    if (err) {
-      result(null, err);
-      return;
-    }
+Note.remove = (userId, id, result) => {
+  sql.query(
+    "DELETE FROM notes WHERE userId = ? AND id = ?",
+    [userId, id],
+    (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
 
-    if (res.affectedRows == 0) {
-      // not found Note with the id
-      result({ kind: "not_found" }, null);
-      return;
-    }
+      if (res.affectedRows == 0) {
+        // not found Note with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
 
-    result(null, res);
-  });
+      result(null, res);
+    }
+  );
 };
 
 module.exports = Note;

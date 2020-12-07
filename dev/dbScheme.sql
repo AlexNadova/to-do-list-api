@@ -42,11 +42,11 @@ VALUES
 
 INSERT INTO notes 
 VALUES
-  (1, 1, "This is Alex's note number 1.", "Title 1.", "2020-11-29 11:36:53", "2020-11-29 13:36:53"),
-  (2, 1, "This is Alex's note number 2.", "Title 2.", "2020-10-29 13:36:53", "2020-11-29 13:36:53"),
-  (3, 1, "This is Alex's note number 3.", "Title 3.", "2020-11-29 13:30:53", current_timestamp()),
-  (4, 2, "This is user's note number 1.", "Title 4.", "2020-11-27 13:36:53", "2020-11-29 13:36:53"),
-  (5, 2, "This is user's note number 2.", "Title 5.", current_timestamp(), current_timestamp());
+  (1, 1, "Title 1.", "This is Alex's note number 1.", "2020-11-29 11:36:53", "2020-11-29 13:36:53"),
+  (2, 1, "Title 2.", "This is Alex's note number 2.", "2020-10-29 13:36:53", "2020-11-29 13:36:53"),
+  (3, 1, "Title 3.","This is Alex's note number 3.", "2020-11-29 13:30:53", current_timestamp()),
+  (4, 2, "Title 4.","This is user's note number 1.", "2020-11-27 13:36:53", "2020-11-29 13:36:53"),
+  (5, 2, "Title 5.","This is user's note number 2.", current_timestamp(), current_timestamp());
 
 INSERT INTO tags
 VALUES

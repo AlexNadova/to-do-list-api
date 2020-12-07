@@ -12,11 +12,13 @@ exports.create = (req, res) => {
   // Create a Note
   const note = new Note({
     userId: req.body.userId,
+    title: req.body.title,
     content: req.body.content,
+    tags: req.body.tags,
   });
 
   // Save Note in the database
-  Note.create(note, (err, data) => {
+  Note.create(req.userId, note, (err, data) => {
     if (err)
       res.status(500).send({
         message: err.message || "Some error occurred while creating the Note.",
@@ -27,7 +29,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Notes from the database.
 exports.findAll = (req, res) => {
-  Note.getAll(req.params.userId, (err, data) => {
+  Note.getAll(req.userId, (err, data) => {
     if (err)
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving notes.",
@@ -62,7 +64,7 @@ exports.update = (req, res) => {
     });
   }
 
-  Note.updateById(req.params.noteId, req.body, (err, data) => {
+  Note.updateById(req.userId, req.params.noteId, req.body, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
@@ -79,7 +81,7 @@ exports.update = (req, res) => {
 
 // Delete a Note with the specified noteId in the request
 exports.delete = (req, res) => {
-  Note.remove(req.params.noteId, (err, data) => {
+  Note.remove(req.userId, req.params.noteId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
