@@ -19,20 +19,23 @@ User.create = (newUser, result) => {
 };
 
 User.findById = (userId, result) => {
-  sql.query(`SELECT * FROM users WHERE id = ${userId}`, (err, res) => {
-    if (err) {
-      result(err, null);
-      return;
-    }
+  sql.query(
+    `SELECT id, email, name, createdAt, updatedAt FROM users WHERE id = ${userId}`,
+    (err, res) => {
+      if (err) {
+        result(err, null);
+        return;
+      }
 
-    if (res.length) {
-      result(null, res[0]);
-      return;
-    }
+      if (res.length) {
+        result(null, res[0]);
+        return;
+      }
 
-    // not found User with the id
-    result({ kind: "not_found" }, null);
-  });
+      // not found User with the id
+      result({ kind: "not_found" }, null);
+    }
+  );
 };
 
 User.findByEmail = (email, result) => {
@@ -55,7 +58,7 @@ User.findByEmail = (email, result) => {
 User.getAll = (result) => {
   sql.query("SELECT * FROM users", (err, res) => {
     if (err) {
-      result(null, err);
+      result(err, null);
       return;
     }
 
@@ -69,7 +72,7 @@ User.updateById = (id, user, result) => {
     [user.name, user.email, user.password, id],
     (err, res) => {
       if (err) {
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -79,7 +82,7 @@ User.updateById = (id, user, result) => {
         return;
       }
 
-      result(null, { id: id, ...user });
+      result(null, { id: id, name: user.name, email: user.email });
     }
   );
 };
@@ -87,7 +90,7 @@ User.updateById = (id, user, result) => {
 User.remove = (id, result) => {
   sql.query("DELETE FROM users WHERE id = ?", id, (err, res) => {
     if (err) {
-      result(null, err);
+      result(err, null);
       return;
     }
 
