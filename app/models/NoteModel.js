@@ -26,10 +26,10 @@ Note.create = (userId, newNote, result) => {
             [res.insertId, tag],
             (err, res) => {
               if (err) {
-                result(err, null);
                 callback(err);
+              } else {
+                callback(null);
               }
-              callback();
             }
           );
         },
@@ -83,7 +83,7 @@ Note.getAll = (userId, result) => {
     userId,
     (err, res) => {
       if (err) {
-        result(null, err);
+        result(err, null);
         return;
       }
       async.each(
@@ -93,14 +93,18 @@ Note.getAll = (userId, result) => {
             "SELECT notes_n_tags.tagId, tags.name FROM notes_n_tags INNER JOIN tags ON notes_n_tags.tagId = tags.id WHERE noteId = ?",
             row.id,
             (err, tags) => {
-              row.tags = tags;
-              callback(null);
+              if (err) {
+                callback(err);
+              } else {
+                row.tags = tags;
+                callback(null);
+              }
             }
           );
         },
         function (err) {
           if (err) {
-            result(null, err);
+            result(err, null);
             return;
           }
           result(null, { userId, data: res });
@@ -116,7 +120,7 @@ Note.updateById = (userId, id, note, result) => {
     [note.title, note.content, userId, id],
     (err, res) => {
       if (err) {
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -138,10 +142,10 @@ Note.updateById = (userId, id, note, result) => {
                     [id, tag],
                     (err, res) => {
                       if (err) {
-                        result(err, null);
                         callback(err);
+                      } else {
+                        callback(null);
                       }
-                      callback();
                     }
                   );
                 },
@@ -174,7 +178,7 @@ Note.remove = (userId, id, result) => {
     [userId, id],
     (err, res) => {
       if (err) {
-        result(null, err);
+        result(err, null);
         return;
       }
 
