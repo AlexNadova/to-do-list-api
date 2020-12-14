@@ -11,7 +11,6 @@ module.exports = (app) => {
       validate({
         title: "string|max:255",
         content: "required|string",
-        tags: "array",
       }),
     ],
     noteController.create
@@ -31,7 +30,6 @@ module.exports = (app) => {
       validate({
         title: "required|string|max:255",
         content: "required|string",
-        tags: "array",
       }),
     ],
     noteController.update
