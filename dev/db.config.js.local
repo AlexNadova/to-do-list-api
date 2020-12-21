@@ -2,5 +2,5 @@ module.exports = {
   HOST: "localhost",
   USER: "user", //change
   PASSWORD: "password", //change
-  DB: "to_do_list_db"
+  DB: "notes_db"
 };

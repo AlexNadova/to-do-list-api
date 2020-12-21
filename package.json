@@ -1,5 +1,5 @@
 {
-  "name": "to-do-list-api",
+  "name": "notes-api",
   "version": "1.0.0",
   "description": "Api for website for taking notes - school project.",
   "main": "server.js",

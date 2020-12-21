@@ -1,6 +1,6 @@
-DROP DATABASE to_do_list_db;
-CREATE DATABASE to_do_list_db;
-USE to_do_list_db;
+DROP DATABASE notes_db;
+CREATE DATABASE notes_db;
+USE notes_db;
 
 CREATE TABLE IF NOT EXISTS `users` (
   id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
